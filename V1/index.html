@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mi Perfil</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0b0b0f;
+      --surface: #13131a;
+      --border: rgba(255,255,255,0.07);
+      --gold: #c9a96e;
+      --gold-light: #e8c98a;
+      --text: #f0ece4;
+      --muted: #7a7570;
+      --glow: rgba(201,169,110,0.15);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 20% 20%, rgba(201,169,110,0.06) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 60% at 80% 80%, rgba(110,140,201,0.05) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      background-size: 200px;
+      opacity: 0.4;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 480px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── PROFILE CARD ── */
+    .profile-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 24px 24px 0 0;
+      padding: 40px 36px 32px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      animation: fadeUp 0.7s ease both;
+    }
+
+    .profile-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 80%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+
+    .avatar-wrap {
+      position: relative;
+      width: 96px;
+      height: 96px;
+      margin: 0 auto 20px;
+    }
+
+    .avatar-placeholder {
+      width: 96px;
+      height: 96px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #1e1c28 0%, #2a2018 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 36px;
+      font-weight: 300;
+      color: var(--gold);
+      letter-spacing: 0.02em;
+    }
+
+    .avatar-ring {
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      border: 1px solid var(--gold);
+      opacity: 0.4;
+      animation: rotateSlow 8s linear infinite;
+    }
+
+    .avatar-ring::after {
+      content: '';
+      position: absolute;
+      top: -2px; left: 50%;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--gold);
+      transform: translateX(-50%);
+    }
+
+    .name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 32px;
+      font-weight: 400;
+      letter-spacing: 0.02em;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .handle {
+      font-size: 13px;
+      color: var(--gold);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      font-weight: 300;
+    }
+
+    .bio {
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--muted);
+      max-width: 340px;
+      margin: 0 auto 24px;
+    }
+
+    .stats {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+
+    .stat { text-align: center; }
+
+    .stat-value {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--gold-light);
+      display: block;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    /* ── LINKS SECTION ── */
+    .links-section {
+      background: rgba(10, 10, 14, 0.6);
+      border: 1px solid var(--border);
+      border-top: none;
+      border-radius: 0 0 24px 24px;
+      padding: 28px 28px 36px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .section-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--muted);
+      margin-bottom: 4px;
+      padding-left: 4px;
+    }
+
+    /* ── LINK BUTTONS ── */
+    .link-btn {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 14px 20px;
+      border-radius: 14px;
+      text-decoration: none;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.02);
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 400;
+      letter-spacing: 0.02em;
+      transition: all 0.25s ease;
+      position: relative;
+      overflow: hidden;
+      animation: fadeUp 0.7s ease both;
+    }
+
+    .link-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, var(--glow), transparent);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .link-btn:hover {
+      border-color: rgba(201,169,110,0.3);
+      background: rgba(201,169,110,0.05);
+      transform: translateX(4px);
+    }
+
+    .link-btn:hover::before { opacity: 1; }
+
+    .link-btn:nth-child(1) { animation-delay: 0.10s; }
+    .link-btn:nth-child(2) { animation-delay: 0.18s; }
+    .link-btn:nth-child(3) { animation-delay: 0.26s; }
+    .link-btn:nth-child(4) { animation-delay: 0.34s; }
+    .link-btn:nth-child(5) { animation-delay: 0.42s; }
+    .link-btn:nth-child(6) { animation-delay: 0.50s; }
+
+    .btn-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 18px;
+    }
+
+    .btn-text  { flex: 1; }
+    .btn-name  { display: block; font-weight: 500; font-size: 14px; }
+    .btn-sub   { display: block; font-size: 11px; color: var(--muted); margin-top: 1px; }
+
+    .btn-arrow {
+      font-size: 16px;
+      color: var(--muted);
+      transition: color 0.2s, transform 0.2s;
+    }
+    .link-btn:hover .btn-arrow { color: var(--gold); transform: translateX(2px); }
+
+    /* Platform icon colors */
+    .icon-instagram { background: linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045); }
+    .icon-tiktok    { background: #111; border: 1px solid #222; }
+    .icon-youtube   { background: #ff0000; }
+    .icon-twitter   { background: #000; border: 1px solid #222; }
+    .icon-linkedin  { background: #0a66c2; }
+    .icon-website   { background: linear-gradient(135deg, #1e1c28, #2a2018); border: 1px solid var(--border); }
+
+    /* ── FOOTER ── */
+    .footer {
+      text-align: center;
+      padding: 24px 0 0;
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      animation: fadeUp 0.7s 0.6s ease both;
+    }
+    .footer a { color: var(--gold); text-decoration: none; opacity: 0.8; }
+    .footer a:hover { opacity: 1; }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes rotateSlow {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+
+    /* ── EDIT MODAL ── */
+    .edit-fab {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--gold);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      color: #0b0b0f;
+      box-shadow: 0 4px 20px rgba(201,169,110,0.4);
+      z-index: 100;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .edit-fab:hover { transform: scale(1.1); box-shadow: 0 6px 28px rgba(201,169,110,0.5); }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.8);
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s, visibility 0.3s;
+    }
+    .modal-overlay.open { opacity: 1; visibility: visible; }
+
+    .modal {
+      background: #16161f;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 32px;
+      width: 100%;
+      max-width: 440px;
+      max-height: 80vh;
+      overflow-y: auto;
+      transform: translateY(20px);
+      transition: transform 0.3s;
+    }
+    .modal-overlay.open .modal { transform: translateY(0); }
+
+    .modal h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 24px;
+      font-weight: 400;
+      color: var(--text);
+      margin-bottom: 24px;
+    }
+
+    .field { margin-bottom: 16px; }
+    .field label {
+      display: block;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .field input, .field textarea {
+      width: 100%;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 14px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .field input:focus, .field textarea:focus { border-color: rgba(201,169,110,0.4); }
+    .field textarea { resize: vertical; min-height: 80px; }
+
+    .modal-btns { display: flex; gap: 10px; margin-top: 24px; }
+    .btn-save {
+      flex: 1;
+      padding: 12px;
+      background: var(--gold);
+      color: #0b0b0f;
+      border: none;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      transition: opacity 0.2s;
+    }
+    .btn-save:hover { opacity: 0.85; }
+    .btn-cancel {
+      padding: 12px 20px;
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      font-size: 14px;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      transition: color 0.2s;
+    }
+    .btn-cancel:hover { color: var(--text); }
+
+    .divider { height: 1px; background: var(--border); margin: 20px 0; }
+    .modal-section-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- PROFILE CARD -->
+  <div class="profile-card" id="profileCard">
+    <div class="avatar-wrap">
+      <div class="avatar-placeholder" id="avatarEl">A</div>
+      <div class="avatar-ring"></div>
+    </div>
+    <h1 class="name" id="nameEl">Alex Rivera</h1>
+    <p class="handle" id="handleEl">@alexrivera</p>
+    <p class="bio" id="bioEl">Diseñador visual & creador de contenido. Compartiendo ideas sobre arte, tecnología y cultura digital.</p>
+    <div class="stats">
+      <div class="stat">
+        <span class="stat-value" id="stat1Val">24K</span>
+        <span class="stat-label" id="stat1Lab">Seguidores</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value" id="stat2Val">120</span>
+        <span class="stat-label" id="stat2Lab">Proyectos</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value" id="stat3Val">8</span>
+        <span class="stat-label" id="stat3Lab">Años</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- LINKS -->
+  <div class="links-section">
+    <p class="section-label">Redes sociales</p>
+
+    <a href="#" class="link-btn" id="btn-instagram">
+      <span class="btn-icon icon-instagram">📸</span>
+      <span class="btn-text">
+        <span class="btn-name">Instagram</span>
+        <span class="btn-sub">@alexrivera</span>
+      </span>
+      <span class="btn-arrow">→</span>
+    </a>
+
+    <a href="#" class="link-btn" id="btn-tiktok">
+      <span class="btn-icon icon-tiktok">🎵</span>
+      <span class="btn-text">
+        <span class="btn-name">TikTok</span>
+        <span class="btn-sub">@alexrivera</span>
+      </span>
+      <span class="btn-arrow">→</span>
+    </a>
+
+    <a href="#" class="link-btn" id="btn-youtube">
+      <span class="btn-icon icon-youtube">▶️</span>
+      <span class="btn-text">
+        <span class="btn-name">YouTube</span>
+        <span class="btn-sub">Alex Rivera Studio</span>
+      </span>
+      <span class="btn-arrow">→</span>
+    </a>
+
+    <a href="#" class="link-btn" id="btn-twitter">
+      <span class="btn-icon icon-twitter">𝕏</span>
+      <span class="btn-text">
+        <span class="btn-name">X / Twitter</span>
+        <span class="btn-sub">@alexrivera</span>
+      </span>
+      <span class="btn-arrow">→</span>
+    </a>
+
+    <a href="#" class="link-btn" id="btn-linkedin">
+      <span class="btn-icon icon-linkedin">in</span>
+      <span class="btn-text">
+        <span class="btn-name">LinkedIn</span>
+        <span class="btn-sub">Alex Rivera</span>
+      </span>
+      <span class="btn-arrow">→</span>
+    </a>
+
+    <a href="#" class="link-btn" id="btn-website">
+      <span class="btn-icon icon-website">✦</span>
+      <span class="btn-text">
+        <span class="btn-name">Mi Sitio Web</span>
+        <span class="btn-sub">alexrivera.com</span>
+      </span>
+      <span class="btn-arrow">→</span>
+    </a>
+  </div>
+
+  <div class="footer">
+    Hecho con ✦ · <a href="#">Crear el tuyo</a>
+  </div>
+</div>
+
+<!-- EDIT FAB -->
+<button class="edit-fab" onclick="openModal()" title="Editar perfil">✎</button>
+
+<!-- EDIT MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModalOutside(event)">
+  <div class="modal">
+    <h2>Editar Perfil</h2>
+
+    <p class="modal-section-title">Información personal</p>
+
+    <div class="field">
+      <label>Nombre</label>
+      <input type="text" id="inp-name" placeholder="Tu nombre" value="Alex Rivera"/>
+    </div>
+    <div class="field">
+      <label>Usuario</label>
+      <input type="text" id="inp-handle" placeholder="@usuario" value="@alexrivera"/>
+    </div>
+    <div class="field">
+      <label>Biografía</label>
+      <textarea id="inp-bio">Diseñador visual & creador de contenido. Compartiendo ideas sobre arte, tecnología y cultura digital.</textarea>
+    </div>
+
+    <div class="field">
+      <label>Stat 1 — Valor</label>
+      <input type="text" id="inp-s1v" value="24K"/>
+    </div>
+    <div class="field">
+      <label>Stat 1 — Etiqueta</label>
+      <input type="text" id="inp-s1l" value="Seguidores"/>
+    </div>
+    <div class="field">
+      <label>Stat 2 — Valor</label>
+      <input type="text" id="inp-s2v" value="120"/>
+    </div>
+    <div class="field">
+      <label>Stat 2 — Etiqueta</label>
+      <input type="text" id="inp-s2l" value="Proyectos"/>
+    </div>
+    <div class="field">
+      <label>Stat 3 — Valor</label>
+      <input type="text" id="inp-s3v" value="8"/>
+    </div>
+    <div class="field">
+      <label>Stat 3 — Etiqueta</label>
+      <input type="text" id="inp-s3l" value="Años"/>
+    </div>
+
+    <div class="divider"></div>
+    <p class="modal-section-title">Links de redes sociales</p>
+
+    <div class="field"><label>Instagram URL</label><input type="url" id="inp-instagram" placeholder="https://instagram.com/..." value="#"/></div>
+    <div class="field"><label>TikTok URL</label><input type="url" id="inp-tiktok" placeholder="https://tiktok.com/@..." value="#"/></div>
+    <div class="field"><label>YouTube URL</label><input type="url" id="inp-youtube" placeholder="https://youtube.com/..." value="#"/></div>
+    <div class="field"><label>X / Twitter URL</label><input type="url" id="inp-twitter" placeholder="https://x.com/..." value="#"/></div>
+    <div class="field"><label>LinkedIn URL</label><input type="url" id="inp-linkedin" placeholder="https://linkedin.com/in/..." value="#"/></div>
+    <div class="field"><label>Sitio Web URL</label><input type="url" id="inp-website" placeholder="https://tusitio.com" value="#"/></div>
+
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
+      <button class="btn-save" onclick="saveProfile()">Guardar cambios</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  function openModal() {
+    document.getElementById('modalOverlay').classList.add('open');
+  }
+  function closeModal() {
+    document.getElementById('modalOverlay').classList.remove('open');
+  }
+  function closeModalOutside(e) {
+    if (e.target === document.getElementById('modalOverlay')) closeModal();
+  }
+
+  function saveProfile() {
+    const name   = document.getElementById('inp-name').value.trim();
+    const handle = document.getElementById('inp-handle').value.trim();
+    const bio    = document.getElementById('inp-bio').value.trim();
+
+    document.getElementById('nameEl').textContent   = name   || 'Tu Nombre';
+    document.getElementById('handleEl').textContent = handle || '@usuario';
+    document.getElementById('bioEl').textContent    = bio;
+
+    // Inicial del avatar
+    document.getElementById('avatarEl').textContent = (name || 'A')[0].toUpperCase();
+
+    // Stats
+    document.getElementById('stat1Val').textContent = document.getElementById('inp-s1v').value || '—';
+    document.getElementById('stat1Lab').textContent = document.getElementById('inp-s1l').value || 'Stat';
+    document.getElementById('stat2Val').textContent = document.getElementById('inp-s2v').value || '—';
+    document.getElementById('stat2Lab').textContent = document.getElementById('inp-s2l').value || 'Stat';
+    document.getElementById('stat3Val').textContent = document.getElementById('inp-s3v').value || '—';
+    document.getElementById('stat3Lab').textContent = document.getElementById('inp-s3l').value || 'Stat';
+
+    // Links
+    ['instagram','tiktok','youtube','twitter','linkedin','website'].forEach(id => {
+      const url = document.getElementById('inp-' + id).value.trim();
+      if (url) document.getElementById('btn-' + id).href = url;
+    });
+
+    closeModal();
+  }
+</script>
+
+</body>
+</html>
